@@ -39,19 +39,11 @@ public class UnityPlayerActivity extends Activity implements IUnityPlayerLifecyc
     private static final String MAC = "B8:27:EB:4F:E9:EC";
     static final String SERVICE_UUID = "ffffffff-ffff-ffff-ffff-fffffffffff0";
     static final String CHARACTERISTIC_UUID = "0000FFF1-0000-1000-8000-00805F9B34FB";
-    static String readStr;
     private static final int REQUEST_CODE_OPEN_GPS = 1;
     private static final int REQUEST_CODE_PERMISSION_LOCATION = 2;
-
+    static String readStr = "[{ \"devices\": [ { \"mac\":\"还未发现隐藏设备，请耐心等待\", \"type\": \"initial\", \"x\": 0, \"y\": 0, \"z\": 0 }]}]";
     static BleDevice device;
 
-    // Override this in your custom UnityPlayerActivity to tweak the command line arguments passed to the Unity Android Player
-    // The command line arguments are passed as a string, separated by spaces
-    // UnityPlayerActivity calls this from 'onCreate'
-    // Supported: -force-gles20, -force-gles30, -force-gles31, -force-gles31aep, -force-gles32, -force-gles, -force-vulkan
-    // See https://docs.unity3d.com/Manual/CommandLineArguments.html
-    // @param cmdLine the current command line arguments, may be null
-    // @return the modified command line string or null
     protected String updateUnityCommandLineArguments(String cmdLine) {
         return cmdLine;
     }
@@ -94,9 +86,6 @@ public class UnityPlayerActivity extends Activity implements IUnityPlayerLifecyc
     public void checkPermissions() {
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (!bluetoothAdapter.isEnabled()) {
-//            不enable，不就又引用空对象虚函数了？？但是enable后还是闪退，直接log都没了
-//            bluetoothAdapter.enable();
-//            Log.d(TAG, "等待用户开启蓝牙...");
             return;
         }
 
@@ -105,25 +94,24 @@ public class UnityPlayerActivity extends Activity implements IUnityPlayerLifecyc
         for (String permission : permissions) {
             int permissionCheck = ContextCompat.checkSelfPermission(this, permission);
             if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
-//                Log.d(TAG, "ACCESS_FINE_LOCATION: PERMISSION_GRANTED...");
                 onPermissionGranted(permission);
             } else {
                 permissionDeniedList.add(permission);
             }
         }
         if (!permissionDeniedList.isEmpty()) {
-            Toast.makeText(UnityPlayerActivity.this, "等待同意权限...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(UnityPlayerActivity.this, getString(R.string.waiting_permission), Toast.LENGTH_SHORT).show();
             String[] deniedPermissions = permissionDeniedList.toArray(new String[0]);
             ActivityCompat.requestPermissions(this, deniedPermissions, REQUEST_CODE_PERMISSION_LOCATION);
         }
     }
 
 
-// 在扫描设备之前，可以配置扫描规则，筛选出与程序匹配的设备
+    // 在扫描设备之前，可以配置扫描规则，筛选出与程序匹配的设备
 // 不配置的话均为默认参数
 // 在2.1.2版本及之前，必须先配置过滤规则再扫描；在2.1.3版本之后可以无需配置，开启默认过滤规则的扫描。
     private void setScanRule() {
-        String[] names = {"Raspberrypi77"};
+//        String[] names = {"Raspberrypi77"};
 
         BleScanRuleConfig scanRuleConfig = new BleScanRuleConfig.Builder()
 //                .setServiceUuids(SERVICE_UUID)      // 只扫描指定的服务的设备，可选
@@ -160,25 +148,24 @@ public class UnityPlayerActivity extends Activity implements IUnityPlayerLifecyc
     }
 
 
-    // https://github.com/Jasonchenlijian/FastBle/wiki/%E6%89%AB%E6%8F%8F%E5%8F%8A%E8%BF%9E%E6%8E%A5#%E9%80%9A%E8%BF%87mac%E8%BF%9E%E6%8E%A5
+    // https://github.com/Jasonchenlijian/FastBle/wiki/
     // 通过已知设备Mac直接连接。此方法可以不经过扫描，尝试直接连接周围复合该Mac的BLE设备。
     // 在很多使用场景，我建议APP保存用户惯用设备的Mac，然后使用该方法进行连接可以大大提高连接效率。
     private void connect(final String mac) {
         BleManager.getInstance().connect(mac, new BleGattCallback() {
             @Override
             public void onStartConnect() {
-                Log.d(TAG, "连接中...");
-                Toast.makeText(UnityPlayerActivity.this, "蓝牙连接中...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(UnityPlayerActivity.this, getString(R.string.ble_connecting), Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onConnectFail(BleDevice bleDevice, BleException exception) {
-                Toast.makeText(UnityPlayerActivity.this, "蓝牙连接失败", Toast.LENGTH_SHORT).show();
+                Toast.makeText(UnityPlayerActivity.this, getString(R.string.connection_failed), Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onConnectSuccess(BleDevice bleDevice, BluetoothGatt gatt, int status) {
-                Toast.makeText(UnityPlayerActivity.this, "蓝牙连接成功", Toast.LENGTH_SHORT).show();
+                Toast.makeText(UnityPlayerActivity.this, getString(R.string.connection_succeed), Toast.LENGTH_SHORT).show();
                 device = bleDevice;
 
                 setMTU(bleDevice, 256); // 树莓派（Bleno？）最高支持256,写更高返回也是256
@@ -187,15 +174,15 @@ public class UnityPlayerActivity extends Activity implements IUnityPlayerLifecyc
                 timer.schedule(new TimerTask() {
                     @Override
                     public void run() {
-                        // 开了notify，read也还是读不全
-                        UnityPlayerActivity.notify(device, SERVICE_UUID, CHARACTERISTIC_UUID, false);
+                        UnityPlayerActivity.notify(UnityPlayerActivity.this, UnityPlayerActivity.device,
+                                UnityPlayerActivity.SERVICE_UUID, UnityPlayerActivity.CHARACTERISTIC_UUID, false);
                     }
                 }, 1000); // 延迟 1000 毫秒（1秒）
             }
 
             @Override
             public void onDisConnected(boolean isActiveDisConnected, BleDevice bleDevice, BluetoothGatt gatt, int status) {
-                Toast.makeText(UnityPlayerActivity.this, "蓝牙断开连接", Toast.LENGTH_SHORT).show();
+                Toast.makeText(UnityPlayerActivity.this, getString(R.string.ble_disconnect), Toast.LENGTH_SHORT).show();
                 stopNotify(device, SERVICE_UUID, CHARACTERISTIC_UUID);
             }
         });
@@ -206,22 +193,23 @@ public class UnityPlayerActivity extends Activity implements IUnityPlayerLifecyc
         if (Manifest.permission.ACCESS_FINE_LOCATION.equals(permission)) {
             if (!checkGPSIsOpen()) {
                 new AlertDialog.Builder(this)
-                    .setTitle(R.string.notifyTitle)
-                    .setMessage(R.string.gpsNotifyMsg)
-                    .setNegativeButton(R.string.cancel,
-                            (dialog, which) -> finish())
-                    .setPositiveButton(R.string.setting,
-                            (dialog, which) -> {
-                                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                                startActivityForResult(intent, REQUEST_CODE_OPEN_GPS);
-                            })
-                    .setCancelable(false)
-                    .show();
+                        .setTitle(R.string.notifyTitle)
+                        .setMessage(R.string.gpsNotifyMsg)
+                        .setNegativeButton(R.string.cancel,
+                                (dialog, which) -> finish())
+                        .setPositiveButton(R.string.setting,
+                                (dialog, which) -> {
+                                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                                    startActivityForResult(intent, REQUEST_CODE_OPEN_GPS);
+                                })
+                        .setCancelable(false)
+                        .show();
             }
         }
     }
 
-    public static void notify(BleDevice bleDevice, String uuid_service, String uuid_notify, boolean useCharacteristicDescriptor) {
+
+    public static void notify(Context context, BleDevice bleDevice, String uuid_service, String uuid_notify, boolean useCharacteristicDescriptor) {
         BleManager.getInstance().notify(
             bleDevice,
             uuid_service,
@@ -239,10 +227,13 @@ public class UnityPlayerActivity extends Activity implements IUnityPlayerLifecyc
 
                 @Override
                 public void onCharacteristicChanged(byte[] data) {
-                    // 打开通知后，设备发过来的数据将在这里出现
+                    // 通知发现新设备。弹toast提示，read更新列表，打开列表后就会调unity更新一波。
                     String str = new String(data);
                     Log.d(TAG, "notify: " + str);
-                    // TODO 改notify，发现新设备提示
+                    // TODO static没法弹toast怎么办，只能打开列表看了
+                    Toast.makeText(context, "发现新设备，请打开列表查看", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(context, getString(R.string.find_device), Toast.LENGTH_SHORT).show();
+                    read(device, SERVICE_UUID, CHARACTERISTIC_UUID);
                 }
             });
     }
@@ -300,30 +291,26 @@ public class UnityPlayerActivity extends Activity implements IUnityPlayerLifecyc
                              String uuid_write,
                              byte[] data,
                              boolean split) {
+        // 是否使用分包发送；无`boolean split`参数的`write`方法默认对超过20字节的数据进行分包发送。
         BleManager.getInstance().write(
-            bleDevice,
-            uuid_service,
-            uuid_write,
-            data,
-            split,
-            new BleWriteCallback() {
-                @Override
-                public void onWriteSuccess(int current, int total, byte[] justWrite) {
+                bleDevice,
+                uuid_service,
+                uuid_write,
+                data,
+                split,
+                new BleWriteCallback() {
+                    @Override
+                    public void onWriteSuccess(int current, int total, byte[] justWrite) {
+//                        `current`表示当前发送第几包数据，`total`表示本次总共多少包数据，`justWrite`表示刚刚发送成功的数据包。
 //                        Log.d(TAG, "发送数据到设备成功");
-                }
+                    }
 
-                @Override
-                public void onWriteFailure(BleException exception) {
+                    @Override
+                    public void onWriteFailure(BleException exception) {
 //                        Log.d(TAG, "发送数据到设备失败");
-                }
-            });
+                    }
+                });
     }
-//    boolean sendNextWhenLastSuccess,
-//    long intervalBetweenTwoPackage
-//    - 在没有扩大MTU及扩大MTU无效的情况下，当遇到超过20字节的长数据需要发送的时候，需要进行分包。参数`boolean split`表示是否使用分包发送；无`boolean split`参数的`write`方法默认对超过20字节的数据进行分包发送。
-//    - 关于`onWriteSuccess`回调方法: `current`表示当前发送第几包数据，`total`表示本次总共多少包数据，`justWrite`表示刚刚发送成功的数据包。
-//    - 对于分包发送的辅助策略，可以选择发送上一包数据成功之后发送下一包，或直接发送下一包，参数`sendNextWhenLastSuccess`表示是否待收到`onWriteSuccess`之后再进行下一包的发送。默认true。
-//    - 参数`intervalBetweenTwoPackage`表示延时多长时间发送下一包，单位ms，默认0。
 
 
     public static void setMTU(BleDevice bleDevice, int mtu) {
@@ -346,7 +333,21 @@ public class UnityPlayerActivity extends Activity implements IUnityPlayerLifecyc
         Log.i("Unity", "获得设备定位坐标  " + location);
 
         // gameobject, method, 对应方法的参数
-        UnityPlayer.UnitySendMessage("SimpleAR", "Locator", location);
+        UnityPlayer.UnitySendMessage("control", "Locator", location);
+    }
+
+    public void Occlusion() {
+        Log.i("Unity", "修改遮挡模式");
+
+        // gameobject, method, 对应方法的参数
+        UnityPlayer.UnitySendMessage("control", "Occlusion", "");
+    }
+
+    public void Aimer(String location) {
+        Log.i("Unity", "修改定位目标  " + location);
+
+        // gameobject, method, 对应方法的参数
+        UnityPlayer.UnitySendMessage("control", "Aimer", location);
     }
 
     public void SendVIO(String json) {

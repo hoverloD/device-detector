@@ -21,14 +21,4 @@
             android:fontFamily="sans-serif"
             android:textColor="@android:color/primary_text_light"/>
 
-    <!--    <ListView-->
-    <!--            android:layout_width="match_parent"-->
-    <!--            android:layout_height="match_parent"-->
-    <!--            android:divider="@android:color/darker_gray"-->
-    <!--            android:dividerHeight="1dp"-->
-    <!--            android:paddingBottom="8dp"-->
-    <!--            android:paddingLeft="8dp"-->
-    <!--            android:paddingRight="8dp"-->
-    <!--            android:paddingTop="8dp" />-->
-
 </LinearLayout>
