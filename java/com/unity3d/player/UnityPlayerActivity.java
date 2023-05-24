@@ -41,7 +41,8 @@ public class UnityPlayerActivity extends Activity implements IUnityPlayerLifecyc
     static final String CHARACTERISTIC_UUID = "0000FFF1-0000-1000-8000-00805F9B34FB";
     private static final int REQUEST_CODE_OPEN_GPS = 1;
     private static final int REQUEST_CODE_PERMISSION_LOCATION = 2;
-    static String readStr = "[{ \"devices\": [ { \"mac\":\"还未发现隐藏设备，请耐心等待\", \"type\": \"initial\", \"x\": 0, \"y\": 0, \"z\": 0 }]}]";
+    public static String readStr = "[{ \"devices\": []}]";
+    public static int cnt = 0;
     static BleDevice device;
 
     protected String updateUnityCommandLineArguments(String cmdLine) {
@@ -82,10 +83,10 @@ public class UnityPlayerActivity extends Activity implements IUnityPlayerLifecyc
     }
 
 
-    // 动态权限获取
-    public void checkPermissions() {
+    private void checkPermissions() {
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (!bluetoothAdapter.isEnabled()) {
+            Toast.makeText(this, getString(R.string.open_bluetooth), Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -100,16 +101,13 @@ public class UnityPlayerActivity extends Activity implements IUnityPlayerLifecyc
             }
         }
         if (!permissionDeniedList.isEmpty()) {
-            Toast.makeText(UnityPlayerActivity.this, getString(R.string.waiting_permission), Toast.LENGTH_SHORT).show();
-            String[] deniedPermissions = permissionDeniedList.toArray(new String[0]);
+            String[] deniedPermissions = permissionDeniedList.toArray(new String[permissionDeniedList.size()]);
             ActivityCompat.requestPermissions(this, deniedPermissions, REQUEST_CODE_PERMISSION_LOCATION);
         }
     }
 
-
-    // 在扫描设备之前，可以配置扫描规则，筛选出与程序匹配的设备
-// 不配置的话均为默认参数
-// 在2.1.2版本及之前，必须先配置过滤规则再扫描；在2.1.3版本之后可以无需配置，开启默认过滤规则的扫描。
+// 在扫描设备之前，可以配置扫描规则，筛选出与程序匹配的设备
+// TODO 省事用的connect，想做自定义就改成这个
     private void setScanRule() {
 //        String[] names = {"Raspberrypi77"};
 
@@ -230,7 +228,7 @@ public class UnityPlayerActivity extends Activity implements IUnityPlayerLifecyc
                     // 通知发现新设备。弹toast提示，read更新列表，打开列表后就会调unity更新一波。
                     String str = new String(data);
                     Log.d(TAG, "notify: " + str);
-                    // TODO static没法弹toast怎么办，只能打开列表看了
+                    // static没法弹toast,增加context参数传给makeText
                     Toast.makeText(context, "发现新设备，请打开列表查看", Toast.LENGTH_SHORT).show();
 //                    Toast.makeText(context, getString(R.string.find_device), Toast.LENGTH_SHORT).show();
                     read(device, SERVICE_UUID, CHARACTERISTIC_UUID);
@@ -248,7 +246,7 @@ public class UnityPlayerActivity extends Activity implements IUnityPlayerLifecyc
     // 通过notify获取新设备定位不是更好？
     // 发现bleno的notify没有offset参数用于分包传送，read、write有，或许代表无法发送长信息？换回read...
     // 一包最多发253字符（MTU是256，减去包头包尾3）
-    // 这个read也有点迷。。一次为什么只打印593个字符
+    // read最多读到593个字符，用nRF测了一下，推测是Bleno那边有问题
     public static void read(BleDevice bleDevice,
                             String uuid_service,
                             String uuid_read) {
@@ -312,7 +310,6 @@ public class UnityPlayerActivity extends Activity implements IUnityPlayerLifecyc
                 });
     }
 
-
     public static void setMTU(BleDevice bleDevice, int mtu) {
         BleManager.getInstance().setMtu(bleDevice, mtu, new BleMtuChangedCallback() {
             @Override
@@ -351,9 +348,12 @@ public class UnityPlayerActivity extends Activity implements IUnityPlayerLifecyc
     }
 
     public void SendVIO(String json) {
-        Log.v("Unity", "相机定位" + json);
-        byte[] byteArray = json.getBytes();
-        UnityPlayerActivity.write(device, SERVICE_UUID,CHARACTERISTIC_UUID, byteArray, false);
+        if(cnt % 3 == 0) {
+            Log.v("Unity", "相机定位" + json);
+            byte[] byteArray = json.getBytes();
+            UnityPlayerActivity.write(device, SERVICE_UUID,CHARACTERISTIC_UUID, byteArray, false);
+        }
+        cnt++;
     }
 
     @Override

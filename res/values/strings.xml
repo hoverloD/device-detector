@@ -1,5 +1,6 @@
 <resources>
     <string name="notifyTitle">提示</string>
+    <string name="open_bluetooth">请开启手机蓝牙</string>
     <string name="gpsNotifyMsg">当前手机扫描蓝牙需要打开定位功能。</string>
     <string name="setting">前往设置</string>
     <string name="cancel">取消</string>
@@ -12,20 +13,64 @@
     <string name="find_device">发现新设备，请打开列表查看</string>
 
     <string name="help_desc">应用使用帮助</string>
-    <string name="locate">获取设备定位</string>
+    <string name="tips_desc">小贴士</string>
     <string name="mode_change">切换遮挡模式</string>
     <string name="device_list">设备列表</string>
     <string name="device_image">设备图片</string>
 
     <string name="initial_list">还未发现隐藏设备，请耐心等待</string>
+    <string name="back_to_start">回到起点</string>
+    <string name="type_camera">摄像头</string>
+    <string name="type_scamera">小摄像头</string>
+    <string name="type_doorbell">智能门铃</string>
+    <string name="type_plug">智能插排</string>
+    <string name="type_unknown">未知类型</string>
+    <string name="coordinate">坐标: </string>
     <string name="you_chose">您选择了：</string>
     <string name="starting_point">起点位置</string>
 
+    <string name="help_info">
+        本应用开启后自动连接树莓派并发送位置信息，请确保顺利连接后，手持两设备在屋内走动\n
+        \n新发现的设备会在列表中更新并在对应位置展示一个球体，请耐心等待\n
+        \n点击列表中对象，紫色箭头会为您指路
+        </string>
 
-    <string name="help_info">本应用开启后自动连接树莓派并发送VIO数据，请先开启树莓派蓝牙确保顺利连接\n
-        \n请手持此设备和树莓派在屋内走动，以收集RSSI与VIO信息\n
-        \n发现的新设备会在列表中更新并在对应位置展示一个球体，请耐心等待\n
-        \n点击列表中对象，紫色箭头会为您指路\n
-        \n点击遮挡按钮切换遮挡模式，使AR物体融入真实环境/无视现实遮挡、完整显示\n
-        \nAR需要根据特征明显的点定位，尽量不要使相机拍摄画面过于单调（例：大片纯色墙壁/地板、遮挡镜头导致画面纯黑）或者发生剧烈晃动，请在光线充足的环境下使用</string>
+    <string name="tip1">
+        AR需要根据特征明显的点定位。\n尽量不要使相机拍摄画面过于单调
+        （例如：大片纯色墙壁/地板、遮挡镜头导致画面纯黑）；减少剧烈晃动；请在光线充足的环境下使用。
+    </string>
+    <string name="tip2">
+        点击遮挡按钮切换遮挡模式，使AR物体：融入真实环境or无视真实环境（完整显示）
+    </string>
+    <string name="tip3">
+        MAC地址的前六位为组织唯一标识符（OUI），您可以在
+        https://standards-oui.ieee.org/oui/oui.txt
+        网站查询隐藏设备的生产厂商，聊胜于无。
+    </string>
+    <string name="tip4">
+        本软件的AR功能使用Unity3D的AR Foundation开发，基于Google公司的ARCore框架。
+        ARCore不仅适用于Android，还提供了对iOS、Unity、Unreal等平台的支持。
+    </string>
+    <string name="tip5">
+        本软件显示的设备坐标沿用Unity3D的左手坐标系，右x前z上y。
+<!--        <font color="#ff0000">右x</font>-->
+<!--        &lt;font color=&quot;#0000ff&quot;&gt;前z&lt;/font&gt;-->
+<!--        &lt;font color=&quot;#00ff00&quot;&gt;上y&lt;/font&gt;-->
+    </string>
+    <string name="tip6">
+        我们通过ARCore的运动跟踪功能获知设备的位置信息。\n
+        运动跟踪基于视觉惯性里程计（Visual Inertial Odometry，VIO）技术，
+        综合分析拍摄画面与加速度传感器两类信息来定位。
+    </string>
+    <string name="tip7">
+        由于使用了相机与加速度分析相结合的方式，AR定位在这几种情况下会失效：\n
+        \n1.在运动环境中跟踪：例如用户在移动的电梯上使用 ARCore，这时 IMU 获取的数据不仅包括用户的加速度，也包括电梯的加速度，这将导致跟踪失败。\n
+        \n2.跟踪动态的环境：例如用户拍摄了波动的水面，从摄像机获取到的图像信息是不稳定的，这将导致特征点提取出错。\n
+        \n3.热飘移：相机与IMU都是温度敏感器件，在设备使用过程中可能存在设备发热问题，影响到相机获取图像的颜色信息和IMU测量的加速度信息准确性，进而表现为AR物体发生漂移。
+    </string>
+    <string name="tip8">
+        下一步更新计划：\n- 蓝牙自定义扫描与连接；\n- 美化设备位置信息；\n- 实时显示选定的隐藏设备与用户距离。
+    </string>
+    <string name="one_more_tip">再看一条</string>
+    <string name="round">已经都看过一遍了哦</string>
 </resources>

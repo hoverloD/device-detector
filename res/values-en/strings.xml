@@ -1,5 +1,6 @@
 <resources>
     <string name="notifyTitle">Prompt</string>
+    <string name="open_bluetooth">Please open bluetooth</string>
     <string name="gpsNotifyMsg">Current mobile phone scanning Bluetooth needs to open the positioning function</string>
     <string name="setting">Go to settings</string>
     <string name="cancel">Cancel</string>
@@ -12,20 +13,70 @@
     <string name="find_device">new device discovered, please open the list to view</string>
 
     <string name="help_desc">using help</string>
-    <string name="locate">get location</string>
+    <string name="tips_desc">tips</string>
     <string name="mode_change">occlusion mode change</string>
     <string name="device_list">device list</string>
     <string name="device_image">device image</string>
 
     <string name="initial_list">No hidden device has been found yet. Please wait patiently</string>
+    <string name="back_to_start">back to base point</string>
+    <string name="type_camera">camera</string>
+    <string name="type_doorbell">smart doorbell</string>
+    <string name="type_plug">smart plug</string>
+    <string name="type_scamera">small camera</string>
+    <string name="type_unknown">unknown type</string>
+    <string name="coordinate">coordinate: </string>
     <string name="you_chose">you chose: </string>
     <string name="starting_point">starting point</string>
 
-    <string name="help_info">Automatically connect raspberry pie and send VIO data when this application is opened. Please turn on bluetooth for raspberry pie to ensure a smooth connection\n
-        \nPlease walk around the house with this device and raspberry pie in hand to collect RSSI and VIO information\n
-        \nThe new device found will be updated in the list and display a sphere in the corresponding position. Please wait patiently\n
-        \nClick on the list item and the purple arrow will show you the direction\n
-        \nClick the occlusion button to switch the occlusion mode to make AR objects integrate into the real environment/ignore reality occlusion and display completely\n
-        \nAR needs to locate according to the points with obvious features. Try not to make the picture taken by the camera too monotonous (for example, a large solid color wall / floor, occlusion lens causes pure black) or shake violently. Please use it in a well-lit environment.
+    <string name="help_info">
+        This app will automatically connect to Raspberry PI and send location information after opening. \n
+        \nPlease make sure that the connection is successful and walk around the house with both devices in hand\n
+        \nThe newly discovered device will update in the list and display a sphere in the corresponding position, please wait patiently for\n
+        \nClick on the object in the list and the purple arrow will show you the way
+        </string>
+    <string name="tip1">
+        AR needs to be located according to points with obvious features.\n
+        \nTry not to make the camera shot too monotonous (such as: large solid color wall/floor, block the lens resulting in pure black picture);\n
+        \nReduce violent shaking; Please use in a well-lit environment.
     </string>
+    <string name="tip2">
+        Click the Occlusion button to switch occlusion mode, so that AR objects: \n
+        \nintegrate into the real environment or ignore the real environment (complete display)
+    </string>
+    <string name="tip3">
+        The first six digits of the MAC address are organizational unique identifiers (OUI). \n
+        \nYou can find out the manufacturer of the hidden device by looking at \n
+        \nhttps://standards-oui.ieee.org/oui/oui.txt, better than nothing.
+    </string>
+    <string name="tip4">
+        AR function of this software is developed by AR Foundation of Unity3D, based on ARCore framework of Google.
+    </string>
+    <string name="tip5">
+        The device coordinates displayed follow Unity3D, a left-handed, Y-Up coordinate system. \n
+        With right x, before z and y above.
+    </string>
+    <string name="tip6">
+        We know the location of the device through ARCore\'s motion tracking feature. \n
+        \nMotion tracking is based on the Visual Inertial Odometry (VIO) technology,\n
+        \nwhich analyzes the image and acceleration sensor information to locate the motion.
+    </string>
+    <string name="tip7">
+        Due to the combination of camera and acceleration analysis, AR positioning will fail in several cases: \n
+        \n1. Tracking in a moving environment: for example, when a user uses ARCore on a moving elevator, \n
+        the data obtained by IMU includes not only the acceleration of the user but also the acceleration of the elevator, which will lead to tracking failure. \n
+        \n2. Tracking dynamic environment: For example, when the user takes a picture of the fluctuating water surface, \n
+        the image information obtained from the camera is unstable, which will lead to the error of feature point extraction. \n
+        \n3. Thermal drift: Both the camera and IMU are temperature sensitive devices, there may be a problem of equipment\n
+        heating during the use of the equipment, which will affect the accuracy of the color information obtained by the camera\n
+        and the acceleration information measured by the IMU, and then the AR object will drift.
+    </string>
+    <string name="tip8">
+        Update plan:\n
+        \n- Bluetooth custom scan and connection;
+        \n- Beautify device location information;
+        \n- Displays the distance between the selected hidden device and the user in real time.
+    </string>
+    <string name="one_more_tip">next tip</string>
+    <string name="round">You\'ve already seen one round</string>
 </resources>

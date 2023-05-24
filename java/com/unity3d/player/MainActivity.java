@@ -1,6 +1,7 @@
 package com.unity3d.player;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +23,8 @@ public class MainActivity extends UnityPlayerActivity {
 
     public ImageButton help_btn;
     public ImageButton locate_btn;
+    public ImageButton tips_btn;
+    public int tip_count, tip_size;
     Set<String> macs = new HashSet<>();
     public ArrayList<String> items = new ArrayList<>();
     public ArrayList<String> devices = new ArrayList<>();
@@ -39,17 +42,26 @@ public class MainActivity extends UnityPlayerActivity {
         LayoutParams layoutParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         layout.addView(mUnityPlayer.getView(), 0, layoutParams);
 
+        tip_count = 0;
+        String[] Tips = {
+                getString(R.string.tip1),
+                getString(R.string.tip2),
+                getString(R.string.tip3),
+                getString(R.string.tip4),
+                getString(R.string.tip5),
+                getString(R.string.tip6),
+                getString(R.string.tip7),
+                getString(R.string.tip8)
+        };
+        tip_size = Tips.length;
+
         help_btn = (ImageButton) findViewById(R.id.help_button);
         help_btn.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(getString(R.string.help_desc));
             builder.setMessage(getString(R.string.help_info));
 
-//            Drawable drawable = new ColorDrawable(Color.TRANSPARENT);
-//            drawable.setAlpha(200);
-
             AlertDialog alertDialog = builder.create();
-//            alertDialog.getWindow().setBackgroundDrawable(drawable);
             alertDialog.show();
         });
 
@@ -59,23 +71,66 @@ public class MainActivity extends UnityPlayerActivity {
             Occlusion();
         });
 
+        tips_btn = (ImageButton) findViewById(R.id.tips_btn);
+        tips_btn.setOnClickListener(v -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+//            textView没学会
+//            TextView textView = new TextView(this);
+//            textView.setText(Tips[(tip_count++) % tip_size]);
+//            builder.setMessage(textView.getText().toString());
+
+            builder.setTitle(getString(R.string.tips_desc));
+            // 本来想随机展示一条tip，整个列表全部展示过一轮后，开启下一轮随机。
+            // 但是tips前后连贯性有点强，就直接顺序展示了。
+            builder.setMessage(Tips[(tip_count++) % tip_size])
+                .setPositiveButton(getString(R.string.one_more_tip), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if((tip_count + 1) % tip_size == 0) {
+                            // 接下来模拟点击，展示最后一条（更新计划）
+                            Toast.makeText(MainActivity.this, getString(R.string.round), Toast.LENGTH_SHORT).show();
+                        }
+                        tips_btn.performClick();
+                    }
+                });
+
+            final AlertDialog alertDialog = builder.create();
+//            设置透明度不管用。给mainActivity加了个theme： android:theme="@style/TransTheme"，
+//            把UI搞没了orz。但是原来UI的对话框不支持半透明
+//            alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+//                @Override
+//                public void onShow(DialogInterface dialogInterface) {
+//                    Window window = alertDialog.getWindow();
+//                    if (window != null) {
+//                        window.setDimAmount(0.7f);
+//                    }
+//                }
+//            });
+            alertDialog.show();
+        });
+
         // 设备定位展示列表
         ImageButton showListButton = findViewById(R.id.list_fab);
         showListButton.setOnClickListener(v -> {
             showList();
         });
 
-
+        // 初始列表项。不在showList调用后更新了，因为设置初始readStr可能被刷掉
+        items.add(getString(R.string.initial_list));
+        devices.add("{ \"mac\":\"" + "initial" + "\", \"type\": \"initial\", \"x\": 0, \"y\": 0, \"z\": 0 }");
+        int typeId = this.getResources().getIdentifier("initial", "drawable", this.getPackageName());
+        images.add(typeId);
     }
 
     public void showList() {
         // 解析read拿到的json
+        boolean changed = false;
         String jsonString = UnityPlayerActivity.readStr;
 //        String jsonString = "[{ \"devices\": [ { \"mac\":\"ff:ff:ff:ff:ff:ff\", \"type\": \"camera\", \"x\": 0.35, \"y\": 0, \"z\": 0.1541 }, { \"mac\":\"ff:ff:ff:ff:ff:fe\", \"type\": \"scamera\", \"x\": -0.541, \"y\": 0, \"z\": -0.1 } ] }]";
         String[] Items = new String[0];
         String[] Devices = new String[0];
         Integer[] Images = new Integer[0];
-
 
         try {
             JSONArray jsonArray = new JSONArray(jsonString);
@@ -98,10 +153,31 @@ public class MainActivity extends UnityPlayerActivity {
                 if(!macs.contains(mac)) {
                     DeviceLoc(jsonStr);
                     macs.add(mac);
-                    items.add(mac);
+                    changed = true; // 列表里加了设备，标记为true
+
+                    String type_ = getString(R.string.type_unknown);
+                    switch(type) {
+                        case "camera":
+                            type_ = getString(R.string.type_camera);
+                            break;
+                        case "scamera":
+                            type_ = getString(R.string.type_scamera);
+                            break;
+                        case "plug":
+                            type_ = getString(R.string.type_plug);
+                            break;
+                        case "doorbell":
+                            type_ = getString(R.string.type_doorbell);
+                            break;
+                    }
+                    items.add("MAC:\t" + mac + "\t\t" + type_ + "\n" + getString(R.string.coordinate) + "\t" + x + ", " + y + ", " + z);
                     devices.add(jsonStr);
                     int typeId = this.getResources().getIdentifier(type, "drawable", this.getPackageName());
                     images.add(typeId);
+                }
+                if (changed){
+                    // 说明不是初始列表了，修改初始项文字
+                    items.set(0, getString(R.string.back_to_start));
                 }
             }
             Items = items.toArray(new String[0]);
@@ -136,8 +212,8 @@ public class MainActivity extends UnityPlayerActivity {
                 // 为每个列表项设置点击事件
                 convertView.setOnClickListener(v -> {
                     String item = finalItems[position];
-                    Toast.makeText(MainActivity.this, getString(R.string.you_chose) +
-                            ((item).equals(getString(R.string.initial_list)) ? getString(R.string.starting_point) : item), Toast.LENGTH_SHORT).show();
+                    // getString(R.string.initial_list)
+                    Toast.makeText(MainActivity.this, getString(R.string.you_chose) + item, Toast.LENGTH_SHORT).show();
                     // 点击某一列后的响应事件，Aimer修改目标
                     Aimer(finalDevices[position]);
                     // 点击后没法自动关掉，那点四周空白也可以，问题不大
