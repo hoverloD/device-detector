@@ -69,20 +69,62 @@
                 android:alpha="0.8"/>
     </LinearLayout>
 
+<!--    <LinearLayout-->
+<!--            android:id="@+id/bottom_bar"-->
+<!--            android:layout_height="120dp"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:orientation="vertical"-->
+<!--            android:background="@android:color/transparent"-->
+<!--            android:layout_alignParentEnd="true"-->
+<!--            android:layout_alignParentBottom="true"-->
+<!--            android:layout_marginEnd="30dp"-->
+<!--            android:layout_marginBottom="110dp">-->
+
+<!--        <ImageButton-->
+<!--                android:id="@+id/start_btn"-->
+<!--                android:layout_width="32dp"-->
+<!--                android:layout_height="32dp"-->
+<!--                android:src="@drawable/start"-->
+<!--                android:background="@android:color/transparent"-->
+<!--                android:layout_weight="1"-->
+<!--                android:scaleType="centerInside"-->
+<!--                android:alpha="0.5"/>-->
+
+<!--        <ImageButton-->
+<!--                android:id="@+id/end_btn"-->
+<!--                android:layout_width="32dp"-->
+<!--                android:layout_height="32dp"-->
+<!--                android:src="@drawable/end"-->
+<!--                android:background="@android:color/transparent"-->
+<!--                android:layout_weight="1"-->
+<!--                android:scaleType="centerInside"-->
+<!--                android:alpha="0.7"/>-->
+
+<!--&lt;!&ndash;        <ImageButton&ndash;&gt;-->
+<!--&lt;!&ndash;                android:id="@+id/send_btn"&ndash;&gt;-->
+<!--&lt;!&ndash;                android:layout_width="32dp"&ndash;&gt;-->
+<!--&lt;!&ndash;                android:layout_height="32dp"&ndash;&gt;-->
+<!--&lt;!&ndash;                android:src="@drawable/send"&ndash;&gt;-->
+<!--&lt;!&ndash;                android:background="@android:color/transparent"&ndash;&gt;-->
+<!--&lt;!&ndash;                android:layout_weight="1"&ndash;&gt;-->
+<!--&lt;!&ndash;                android:scaleType="centerInside"&ndash;&gt;-->
+<!--&lt;!&ndash;                android:alpha="0.8"/>&ndash;&gt;-->
+<!--    </LinearLayout>-->
+
     <LinearLayout
-            android:id="@+id/bottom_bar"
+            android:id="@+id/bottom_fab"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:background="@android:color/transparent"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
             android:layout_marginBottom="50dp">
 
         <ImageButton
                 android:id="@+id/list_fab"
-                android:layout_width="48dp"
+                android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:src="@drawable/list1"
                 android:background="@android:color/transparent"

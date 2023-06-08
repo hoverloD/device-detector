@@ -21,9 +21,8 @@ public class MainActivity extends UnityPlayerActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    public ImageButton help_btn;
-    public ImageButton locate_btn;
-    public ImageButton tips_btn;
+    public ImageButton help_btn, locate_btn, tips_btn;
+    public ImageButton start_btn, end_btn, send_btn;
     public int tip_count, tip_size;
     Set<String> macs = new HashSet<>();
     public ArrayList<String> items = new ArrayList<>();
@@ -110,6 +109,31 @@ public class MainActivity extends UnityPlayerActivity {
             alertDialog.show();
         });
 
+
+
+//        start_btn = (ImageButton) findViewById(R.id.start_btn);
+//        start_btn.setOnClickListener(v -> {
+//            Toast.makeText(MainActivity.this, "开启监听", Toast.LENGTH_SHORT).show();
+//            byte[] byteArray = "moStart".getBytes();
+//            UnityPlayerActivity.write(device, SERVICE_UUID,CHARACTERISTIC_UUID, byteArray, false);
+//        });
+//
+//        end_btn = (ImageButton) findViewById(R.id.end_btn);
+//        end_btn.setOnClickListener(v -> {
+//            Toast.makeText(MainActivity.this, "关闭监听", Toast.LENGTH_SHORT).show();
+//            byte[] byteArray = "moEnd".getBytes();
+//            UnityPlayerActivity.write(device, SERVICE_UUID,CHARACTERISTIC_UUID, byteArray, false);
+//        });
+
+//        // 后端说这个阶段控制不了
+//        send_btn = (ImageButton) findViewById(R.id.send_btn);
+//        send_btn.setOnClickListener(v -> {
+//            Toast.makeText(MainActivity.this, "文件传输", Toast.LENGTH_SHORT).show();
+//            byte[] byteArray = "moSend".getBytes();
+//            UnityPlayerActivity.write(device, SERVICE_UUID,CHARACTERISTIC_UUID, byteArray, false);
+//        });
+
+
         // 设备定位展示列表
         ImageButton showListButton = findViewById(R.id.list_fab);
         showListButton.setOnClickListener(v -> {
@@ -121,6 +145,27 @@ public class MainActivity extends UnityPlayerActivity {
         devices.add("{ \"mac\":\"" + "initial" + "\", \"type\": \"initial\", \"x\": 0, \"y\": 0, \"z\": 0 }");
         int typeId = this.getResources().getIdentifier("initial", "drawable", this.getPackageName());
         images.add(typeId);
+    }
+
+    private String getDeviceType(String type) {
+        String type_;
+        switch(type) {
+            case "camera":
+                type_ = getString(R.string.type_camera);
+                break;
+            case "scamera":
+                type_ = getString(R.string.type_scamera);
+                break;
+            case "plug":
+                type_ = getString(R.string.type_plug);
+                break;
+            case "doorbell":
+                type_ = getString(R.string.type_doorbell);
+                break;
+            default:
+                type_ = getString(R.string.type_unknown);
+        }
+        return type_;
     }
 
     public void showList() {
@@ -149,36 +194,33 @@ public class MainActivity extends UnityPlayerActivity {
                 double y = deviceObject.getDouble("y");
                 double z = deviceObject.getDouble("z");
                 Log.d(TAG, "device: " + mac + " " + x + " " + y + " " + z);
-                // 新mac代表新设备，在列表中新增，在unity部署预制件。否则对此条不做处理
+                // 新mac代表新设备，在列表中新增，在unity部署预制件
                 if(!macs.contains(mac)) {
                     DeviceLoc(jsonStr);
                     macs.add(mac);
                     changed = true; // 列表里加了设备，标记为true
 
-                    String type_ = getString(R.string.type_unknown);
-                    switch(type) {
-                        case "camera":
-                            type_ = getString(R.string.type_camera);
-                            break;
-                        case "scamera":
-                            type_ = getString(R.string.type_scamera);
-                            break;
-                        case "plug":
-                            type_ = getString(R.string.type_plug);
-                            break;
-                        case "doorbell":
-                            type_ = getString(R.string.type_doorbell);
-                            break;
-                    }
+                    String type_ = getDeviceType(type);
                     items.add("MAC:\t" + mac + "\t\t" + type_ + "\n" + getString(R.string.coordinate) + "\t" + x + ", " + y + ", " + z);
                     devices.add(jsonStr);
                     int typeId = this.getResources().getIdentifier(type, "drawable", this.getPackageName());
                     images.add(typeId);
                 }
-                if (changed){
-                    // 说明不是初始列表了，修改初始项文字
-                    items.set(0, getString(R.string.back_to_start));
-                }
+                // 暂无更新功能（主要是Unity那还没做，这里把macs从集合换成列表就可以）
+//                else { // 内容更新
+//                    DeviceLoc_Re(jsonStr);
+//                    changedID = macs.indexOf(mac);
+//                    String type_ = getDeviceType(type);
+//
+//                    items.set(changedID, "MAC:\t" + mac + "\t\t" + type_ + "\n" + getString(R.string.coordinate) + "\t" + x + ", " + y + ", " + z);
+//                    devices.set(changedID, jsonStr);
+//                    int typeId = this.getResources().getIdentifier(type, "drawable", this.getPackageName());
+//                    images.set(changedID, typeId);
+//                }
+            }
+            if (changed){
+                // 说明不是初始列表了，修改初始项文字
+                items.set(0, getString(R.string.back_to_start));
             }
             Items = items.toArray(new String[0]);
             Devices = devices.toArray(new String[0]);

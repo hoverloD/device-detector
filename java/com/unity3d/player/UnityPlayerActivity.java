@@ -6,10 +6,12 @@ import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothGatt;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -36,7 +38,7 @@ public class UnityPlayerActivity extends Activity implements IUnityPlayerLifecyc
     protected UnityPlayer mUnityPlayer; // don't change the name of this variable; referenced from native code
 
     private static final String TAG = UnityPlayerActivity.class.getSimpleName();
-    private static final String MAC = "B8:27:EB:4F:E9:EC";
+    private static final String MAC = "B8:27:EB:4F:E9:EC"; // "B8:27:EB:39:98:CF"; //
     static final String SERVICE_UUID = "ffffffff-ffff-ffff-ffff-fffffffffff0";
     static final String CHARACTERISTIC_UUID = "0000FFF1-0000-1000-8000-00805F9B34FB";
     private static final int REQUEST_CODE_OPEN_GPS = 1;
@@ -186,23 +188,32 @@ public class UnityPlayerActivity extends Activity implements IUnityPlayerLifecyc
         });
     }
 
-
     private void onPermissionGranted(String permission) {
-        if (Manifest.permission.ACCESS_FINE_LOCATION.equals(permission)) {
-            if (!checkGPSIsOpen()) {
-                new AlertDialog.Builder(this)
+        switch (permission) {
+            case Manifest.permission.ACCESS_FINE_LOCATION:
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !checkGPSIsOpen()) {
+                    new AlertDialog.Builder(this)
                         .setTitle(R.string.notifyTitle)
                         .setMessage(R.string.gpsNotifyMsg)
                         .setNegativeButton(R.string.cancel,
-                                (dialog, which) -> finish())
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    finish();
+                                }
+                            })
                         .setPositiveButton(R.string.setting,
-                                (dialog, which) -> {
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
                                     Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                                     startActivityForResult(intent, REQUEST_CODE_OPEN_GPS);
-                                })
+                                }
+                            })
                         .setCancelable(false)
                         .show();
-            }
+                }
+                break;
         }
     }
 
@@ -230,7 +241,6 @@ public class UnityPlayerActivity extends Activity implements IUnityPlayerLifecyc
                     Log.d(TAG, "notify: " + str);
                     // static没法弹toast,增加context参数传给makeText
                     Toast.makeText(context, "发现新设备，请打开列表查看", Toast.LENGTH_SHORT).show();
-//                    Toast.makeText(context, getString(R.string.find_device), Toast.LENGTH_SHORT).show();
                     read(device, SERVICE_UUID, CHARACTERISTIC_UUID);
                 }
             });
