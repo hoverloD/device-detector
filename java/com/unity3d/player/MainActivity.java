@@ -22,7 +22,7 @@ public class MainActivity extends UnityPlayerActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     public ImageButton help_btn, locate_btn, tips_btn;
-    public ImageButton start_btn, end_btn, send_btn;
+    public ImageButton start_btn, end_btn;
     public int tip_count, tip_size;
     Set<String> macs = new HashSet<>();
     public ArrayList<String> items = new ArrayList<>();
@@ -111,27 +111,20 @@ public class MainActivity extends UnityPlayerActivity {
 
 
 
-//        start_btn = (ImageButton) findViewById(R.id.start_btn);
-//        start_btn.setOnClickListener(v -> {
-//            Toast.makeText(MainActivity.this, "开启监听", Toast.LENGTH_SHORT).show();
-//            byte[] byteArray = "moStart".getBytes();
-//            UnityPlayerActivity.write(device, SERVICE_UUID,CHARACTERISTIC_UUID, byteArray, false);
-//        });
-//
-//        end_btn = (ImageButton) findViewById(R.id.end_btn);
-//        end_btn.setOnClickListener(v -> {
-//            Toast.makeText(MainActivity.this, "关闭监听", Toast.LENGTH_SHORT).show();
-//            byte[] byteArray = "moEnd".getBytes();
-//            UnityPlayerActivity.write(device, SERVICE_UUID,CHARACTERISTIC_UUID, byteArray, false);
-//        });
+        start_btn = (ImageButton) findViewById(R.id.start_btn);
+        start_btn.setOnClickListener(v -> {
+            Toast.makeText(MainActivity.this, "开启监听", Toast.LENGTH_SHORT).show();
+            byte[] byteArray = "moStart".getBytes();
+            UnityPlayerActivity.write(device, SERVICE_UUID,CHARACTERISTIC_UUID, byteArray, false);
+        });
 
-//        // 后端说这个阶段控制不了
-//        send_btn = (ImageButton) findViewById(R.id.send_btn);
-//        send_btn.setOnClickListener(v -> {
-//            Toast.makeText(MainActivity.this, "文件传输", Toast.LENGTH_SHORT).show();
-//            byte[] byteArray = "moSend".getBytes();
-//            UnityPlayerActivity.write(device, SERVICE_UUID,CHARACTERISTIC_UUID, byteArray, false);
-//        });
+        end_btn = (ImageButton) findViewById(R.id.end_btn);
+        end_btn.setOnClickListener(v -> {
+            Toast.makeText(MainActivity.this, "关闭监听", Toast.LENGTH_SHORT).show();
+            byte[] byteArray = "moEnd".getBytes();
+            UnityPlayerActivity.write(device, SERVICE_UUID,CHARACTERISTIC_UUID, byteArray, false);
+        });
+
 
 
         // 设备定位展示列表

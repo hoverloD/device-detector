@@ -48,3 +48,10 @@ bluetooth-hci-socket:
 ## Tips
 
 Make sure the OS of raspberry pi has a corresponding version of nodejs. Use `dpkg --print-architecture` to view system architecture, and check https://registry.npmmirror.com/binary.html?path=node/v8.9.0/ to confirm.
+
+
+## APK
+
+If you need a fast preview, download the APK that has been built:
+
+[device-detector.apk](https://github.com/hoverloD/device-detector/blob/main/device-detector.apk)
