@@ -14,7 +14,7 @@ At first use [unity part of this project](https://github.com/hoverloD/devicedete
 
 Build and install the apk, grant authority of camera and GPS, open bluetooth. 
 
-Run `sudo node start-ble.js`, then open this apk, bluetooth will connect automatically, you'll see VIO data sent to raspberry pi, printed to console and saved in vioData.json. 
+Run `sudo node start-ble.js`([BLE part here](https://github.com/hoverloD/device-detector-ble)), then open this apk, bluetooth will connect automatically, you'll see VIO data sent to raspberry pi, printed to console and saved in vioData.json. 
 
 Use your algorithm to get the device location, write it in deviceLocation.json, then monitor code will find the file has changed, then notify the smartphone, the apk will show a toast in about 2 seconds: "new device discovered, please open the list to view". Open the device list to see the locators.
 
