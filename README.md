@@ -54,4 +54,4 @@ Make sure the OS of raspberry pi has a corresponding version of nodejs. Use `dpk
 
 If you need a fast preview, download the APK that has been built:
 
-[device-detector.apk](https://github.com/hoverloD/device-detector/blob/main/device-detector.apk)
+[device-detector.apk](https://github.com/hoverloD/device-detector/raw/main/device-detector.apk)
