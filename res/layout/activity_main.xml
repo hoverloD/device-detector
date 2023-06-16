@@ -90,11 +90,21 @@
                 android:scaleType="centerInside"
                 android:alpha="0.5"/>
 
+<!--        <ImageButton-->
+<!--                android:id="@+id/end_btn"-->
+<!--                android:layout_width="32dp"-->
+<!--                android:layout_height="32dp"-->
+<!--                android:src="@drawable/end"-->
+<!--                android:background="@android:color/transparent"-->
+<!--                android:layout_weight="1"-->
+<!--                android:scaleType="centerInside"-->
+<!--                android:alpha="0.7"/>-->
+
         <ImageButton
-                android:id="@+id/end_btn"
+                android:id="@+id/send_btn"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:src="@drawable/end"
+                android:src="@drawable/send"
                 android:background="@android:color/transparent"
                 android:layout_weight="1"
                 android:scaleType="centerInside"

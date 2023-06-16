@@ -22,7 +22,7 @@ public class MainActivity extends UnityPlayerActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     public ImageButton help_btn, locate_btn, tips_btn;
-    public ImageButton start_btn, end_btn;
+    public ImageButton start_btn, end_btn, send_btn;
     public int tip_count, tip_size;
     Set<String> macs = new HashSet<>();
     public ArrayList<String> items = new ArrayList<>();
@@ -110,18 +110,24 @@ public class MainActivity extends UnityPlayerActivity {
         });
 
 
-
         start_btn = (ImageButton) findViewById(R.id.start_btn);
         start_btn.setOnClickListener(v -> {
-            Toast.makeText(MainActivity.this, "开启监听", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "moStart", Toast.LENGTH_SHORT).show();
             byte[] byteArray = "moStart".getBytes();
             UnityPlayerActivity.write(device, SERVICE_UUID,CHARACTERISTIC_UUID, byteArray, false);
         });
 
-        end_btn = (ImageButton) findViewById(R.id.end_btn);
-        end_btn.setOnClickListener(v -> {
-            Toast.makeText(MainActivity.this, "关闭监听", Toast.LENGTH_SHORT).show();
-            byte[] byteArray = "moEnd".getBytes();
+//        end_btn = (ImageButton) findViewById(R.id.end_btn);
+//        end_btn.setOnClickListener(v -> {
+//            Toast.makeText(MainActivity.this, "关闭监听", Toast.LENGTH_SHORT).show();
+//            byte[] byteArray = "moEnd".getBytes();
+//            UnityPlayerActivity.write(device, SERVICE_UUID,CHARACTERISTIC_UUID, byteArray, false);
+//        });
+
+        send_btn = (ImageButton) findViewById(R.id.send_btn);
+        send_btn.setOnClickListener(v -> {
+            Toast.makeText(MainActivity.this, "moSend", Toast.LENGTH_SHORT).show();
+            byte[] byteArray = "moSend".getBytes();
             UnityPlayerActivity.write(device, SERVICE_UUID,CHARACTERISTIC_UUID, byteArray, false);
         });
 

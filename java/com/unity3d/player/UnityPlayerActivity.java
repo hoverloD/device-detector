@@ -38,7 +38,8 @@ public class UnityPlayerActivity extends Activity implements IUnityPlayerLifecyc
     protected UnityPlayer mUnityPlayer; // don't change the name of this variable; referenced from native code
 
     private static final String TAG = UnityPlayerActivity.class.getSimpleName();
-    private static final String MAC = "B8:27:EB:39:98:CF"; // "B8:27:EB:4F:E9:EC"; //
+    private static final String MAC = "DC:A6:32:80:0C:A6"; // "B8:27:EB:39:98:CF"; // "B8:27:EB:4F:E9:EC"; //
+
     static final String SERVICE_UUID = "ffffffff-ffff-ffff-ffff-fffffffffff0";
     static final String CHARACTERISTIC_UUID = "0000FFF1-0000-1000-8000-00805F9B34FB";
     private static final int REQUEST_CODE_OPEN_GPS = 1;
@@ -180,7 +181,12 @@ public class UnityPlayerActivity extends Activity implements IUnityPlayerLifecyc
                 }, 1000); // 延迟 1000 毫秒（1秒）
                 // 开启监听
                 byte[] byteArray = "moStart".getBytes();
-                UnityPlayerActivity.write(device, SERVICE_UUID,CHARACTERISTIC_UUID, byteArray, false);
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        UnityPlayerActivity.write(device, SERVICE_UUID,CHARACTERISTIC_UUID, byteArray, false);
+                    }
+                }, 1000);
             }
 
             @Override
